@@ -1,0 +1,559 @@
+@use 'variables' as *;
+
+body {
+  background: $color-page;
+  padding: 0;
+  margin: 0;
+  font:
+    20px/1 'HanHei SC',
+    'PingHei',
+    'PingFang SC',
+    'STHeitiSC-Light',
+    'Helvetica Neue',
+    Helvetica,
+    Arial,
+    sans-serif;
+  overflow: hidden;
+  cursor: default;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  direction: ltr;
+  text-align: left;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+}
+
+.r {
+  float: right;
+}
+
+.l {
+  float: left;
+}
+
+.clear {
+  clear: both;
+}
+
+.bg {
+  background: url($sprite-url) no-repeat;
+  overflow: hidden;
+}
+
+.app {
+  width: $app-width;
+  padding-top: 42px;
+  box-shadow: 0 0 10px #fff inset;
+  border-radius: 20px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: -480px 0 0 -320px;
+  background: $color-body;
+
+  b {
+    display: block;
+    width: 20px;
+    height: 20px;
+    padding: 2px;
+    border: 2px solid $color-cell;
+    margin: 0 2px 2px 0;
+    float: left;
+
+    &:after {
+      content: '';
+      display: block;
+      width: 12px;
+      height: 12px;
+      background: $color-cell;
+      overflow: hidden;
+    }
+
+    &.c {
+      border-color: $color-cell-active;
+
+      &:after {
+        background: $color-cell-active;
+      }
+    }
+
+    &.d {
+      border-color: $color-cell-highlight;
+
+      &:after {
+        background: $color-cell-highlight;
+      }
+    }
+  }
+}
+
+.rect {
+  width: $rect-width;
+  padding: 45px 0 35px;
+  border: #000 solid;
+  border-width: 0 10px 10px;
+  margin: 0 auto;
+  position: relative;
+
+  &.drop {
+    transform: translateY(5px);
+  }
+}
+
+.screen {
+  width: $screen-width;
+  height: $screen-height;
+  border: solid 5px;
+  border-color: $color-border-dark $color-border-light $color-border-light $color-border-dark;
+  margin: 0 auto;
+  position: relative;
+}
+
+.panel {
+  width: $panel-width;
+  height: $panel-height;
+  margin: 0 auto;
+  background: $color-screen;
+  padding: 8px;
+  border: 2px solid $color-panel-border;
+}
+
+.state {
+  width: 108px;
+  position: absolute;
+  top: 0;
+  right: 15px;
+
+  p {
+    line-height: 47px;
+    height: 57px;
+    padding: 10px 0 0;
+    white-space: nowrap;
+    clear: both;
+  }
+
+  .bottom {
+    position: absolute;
+    width: 114px;
+    top: 426px;
+    left: 0;
+  }
+}
+
+.matrix {
+  border: 2px solid #000;
+  padding: 3px 1px 1px 3px;
+  width: 228px;
+}
+
+.next {
+  margin-top: 8px;
+
+  div {
+    height: 22px;
+    width: 88px;
+    float: right;
+  }
+}
+
+.number {
+  height: 24px;
+  font-size: 14px;
+  float: right;
+
+  span {
+    float: left;
+    width: 14px;
+    height: 24px;
+  }
+
+  .s_0 {
+    background-position: -75px -25px;
+  }
+  .s_1 {
+    background-position: -89px -25px;
+  }
+  .s_2 {
+    background-position: -103px -25px;
+  }
+  .s_3 {
+    background-position: -117px -25px;
+  }
+  .s_4 {
+    background-position: -131px -25px;
+  }
+  .s_5 {
+    background-position: -145px -25px;
+  }
+  .s_6 {
+    background-position: -159px -25px;
+  }
+  .s_7 {
+    background-position: -173px -25px;
+  }
+  .s_8 {
+    background-position: -187px -25px;
+  }
+  .s_9 {
+    background-position: -201px -25px;
+  }
+  .s_n {
+    background-position: -215px -25px;
+  }
+  .s_d {
+    background-position: -243px -25px;
+  }
+  .s_d_c {
+    background-position: -229px -25px;
+  }
+}
+
+.music {
+  width: 25px;
+  height: 21px;
+  background-position: -150px -75px;
+  position: absolute;
+  top: 2px;
+  left: -12px;
+
+  &.off {
+    background-position: -175px -75px;
+  }
+}
+
+.pause {
+  width: 20px;
+  height: 18px;
+  background-position: -100px -75px;
+  position: absolute;
+  top: 3px;
+  left: 18px;
+
+  &.c {
+    background-position: -75px -75px;
+  }
+}
+
+.logo {
+  width: 224px;
+  height: 200px;
+  position: absolute;
+  top: 100px;
+  left: 24px;
+  text-align: center;
+
+  p {
+    line-height: 1.4;
+    margin-top: 12px;
+  }
+
+  .dragon {
+    width: 80px;
+    height: 86px;
+    margin: 0 auto;
+    background-position: 0 0;
+  }
+
+  .r1 {
+    background-position: 0 -100px;
+  }
+  .r2 {
+    background-position: -100px -100px;
+  }
+  .r3 {
+    background-position: -200px -100px;
+  }
+  .r4 {
+    background-position: -300px -100px;
+  }
+  .l1 {
+    background-position: 0 0;
+  }
+  .l2 {
+    background-position: -100px 0;
+  }
+  .l3 {
+    background-position: -200px 0;
+  }
+  .l4 {
+    background-position: -300px 0;
+  }
+}
+
+.decorate {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+
+  .topBorder {
+    height: 10px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+
+    span {
+      display: block;
+      width: 10px;
+      height: 10px;
+      background: #000;
+      margin-right: 10px;
+      float: left;
+
+      &.mr {
+        margin-right: 10px;
+      }
+
+      &.ml {
+        margin-left: 10px;
+        float: right;
+        margin-right: 0;
+      }
+    }
+  }
+
+  h1 {
+    text-align: center;
+    font-weight: normal;
+    font-size: 30px;
+    position: absolute;
+    width: 100%;
+    top: -12px;
+    left: 0;
+    margin: 0;
+    letter-spacing: 4px;
+  }
+
+  .view {
+    position: absolute;
+    right: -70px;
+    top: 20px;
+    width: 44px;
+
+    &.l {
+      right: auto;
+      left: -70px;
+    }
+
+    em {
+      display: block;
+      width: 22px;
+      height: 22px;
+      overflow: hidden;
+      float: left;
+    }
+
+    p {
+      height: 22px;
+      clear: both;
+    }
+  }
+}
+
+.keyboard {
+  width: 580px;
+  height: 330px;
+  margin: 20px auto 0;
+  position: relative;
+}
+
+.button {
+  position: absolute;
+  text-align: center;
+  color: #111;
+  white-space: nowrap;
+  line-height: 1.6;
+
+  &.s2 {
+    font-size: 16px;
+  }
+
+  span.position {
+    position: absolute;
+    top: 5px;
+    left: 102px;
+  }
+
+  i {
+    display: block;
+    position: relative;
+    border: 1px solid #000;
+    border-radius: 50%;
+    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.2);
+
+    &:before,
+    &:after {
+      content: '';
+      display: block;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      border-radius: 50%;
+      box-shadow: 0 5px 10px rgba(255, 255, 255, 0.8) inset;
+    }
+
+    &:after {
+      box-shadow: 0 -5px 10px rgba(0, 0, 0, 0.8) inset;
+    }
+
+    &.active {
+      &:before {
+        box-shadow: 0 -3px 6px rgba(255, 255, 255, 0.6) inset;
+      }
+
+      &:after {
+        box-shadow: 0 5px 5px rgba(0, 0, 0, 0.6) inset;
+      }
+    }
+  }
+
+  &.blue i {
+    background: linear-gradient(to bottom, #6e77ef, #4652f3);
+  }
+
+  &.green i {
+    background: linear-gradient(to bottom, #4bc441, #0ec400);
+  }
+
+  &.red i {
+    background: linear-gradient(to bottom, #dc3333, #de0000);
+  }
+
+  &.s0 i {
+    width: 160px;
+    height: 160px;
+  }
+
+  &.s1 {
+    i {
+      width: 100px;
+      height: 100px;
+    }
+
+    em {
+      display: block;
+      width: 0;
+      height: 0;
+      border: 8px solid;
+      border-color: transparent transparent #111;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      margin: -12px 0 0 -8px;
+    }
+  }
+
+  &.s2 i {
+    width: 52px;
+    height: 52px;
+    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+
+    &:before {
+      box-shadow: 0 3px 6px rgba(255, 255, 255, 0.8) inset;
+    }
+
+    &:after {
+      box-shadow: 0 -3px 6px rgba(0, 0, 0, 0.8) inset;
+    }
+
+    &.active {
+      &:before {
+        box-shadow: 0 -1px 2px rgba(255, 255, 255, 0.6) inset;
+      }
+
+      &:after {
+        box-shadow: 0 3px 3px rgba(0, 0, 0, 0.7) inset;
+      }
+    }
+  }
+}
+
+.guide {
+  position: absolute;
+
+  &.right {
+    right: -150px;
+    top: 180px;
+    width: 100px;
+
+    .up {
+      left: 38px;
+      top: 0;
+    }
+
+    .left {
+      left: 0;
+      top: 38px;
+    }
+
+    .down {
+      left: 38px;
+      top: 76px;
+    }
+
+    .right {
+      left: 76px;
+      top: 38px;
+    }
+  }
+
+  &.left {
+    left: -170px;
+    top: 150px;
+    width: 150px;
+    line-height: 1.6;
+  }
+
+  &.qr {
+    left: -170px;
+    bottom: 40px;
+    width: 100px;
+
+    img {
+      width: 100%;
+    }
+  }
+
+  .up,
+  .left,
+  .down,
+  .right {
+    width: 40px;
+    height: 40px;
+    background: #fff;
+    border: 1px solid #000;
+    position: absolute;
+  }
+
+  em {
+    display: block;
+    width: 0;
+    height: 0;
+    border: 6px solid;
+    border-color: transparent transparent #000;
+    margin: 12px auto 0;
+  }
+
+  .space {
+    width: 100px;
+    height: 30px;
+    border: 1px solid #000;
+    background: #fff;
+    margin-top: 20px;
+    text-align: center;
+    line-height: 30px;
+    font-size: 14px;
+  }
+
+  a {
+    color: #000;
+  }
+}

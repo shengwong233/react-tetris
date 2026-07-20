@@ -1,0 +1,46 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "react", "unicorn", "oxc", "import"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn"
+  },
+  "env": {
+    "browser": true,
+    "es2024": true
+  },
+  "ignorePatterns": ["dist/**", "docs/**", "node_modules/**", "public/**"],
+  "overrides": [
+    {
+      "files": ["**/*.{test,spec}.{ts,tsx}"],
+      "plugins": ["typescript", "vitest"],
+      "env": {
+        "vitest": true
+      }
+    },
+    {
+      "files": ["vite.config.ts", "vitest.config.ts", "uno.config.ts"],
+      "env": {
+        "node": true
+      }
+    }
+  ],
+  "settings": {
+    "react": {
+      "version": "19.0"
+    }
+  },
+  "rules": {
+    "no-console": "off",
+    "typescript/no-explicit-any": "warn",
+    "react/react-in-jsx-scope": "off",
+    "react/iframe-missing-sandbox": "off",
+    "import/no-unassigned-import": "off",
+    "eslint/no-underscore-dangle": [
+      "warn",
+      {
+        "allow": ["__dirname", "__filename"]
+      }
+    ]
+  }
+}

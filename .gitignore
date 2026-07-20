@@ -44,3 +44,8 @@ jspm_packages
 .idea/react-tetris.iml
 .idea/vcs.xml
 .idea/watcherTasks.xml
+# Vite
+dist
+*.local
+playwright-report
+test-results
