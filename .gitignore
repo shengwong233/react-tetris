@@ -49,3 +49,9 @@ dist
 *.local
 playwright-report
 test-results
+src-tauri/target
+src-tauri/gen/android/keystore.properties
+src-tauri/gen/android/local.properties
+src-tauri/gen/android/.gradle
+*.jks
+*.keystore

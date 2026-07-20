@@ -1,0 +1,16 @@
+[package]
+name = "react-tetris-tauri"
+version = "2.0.0"
+description = "React Tetris packaged with Tauri 2"
+authors = ["wangsheng"]
+edition = "2021"
+
+[lib]
+name = "react_tetris_tauri_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }

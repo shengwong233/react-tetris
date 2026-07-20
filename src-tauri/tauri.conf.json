@@ -1,0 +1,31 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "React Tetris",
+  "version": "2.0.0",
+  "identifier": "com.shengwong233.reacttetris",
+  "build": {
+    "beforeDevCommand": "pnpm exec vite --host 127.0.0.1 --port 1420",
+    "devUrl": "http://127.0.0.1:1420",
+    "beforeBuildCommand": "pnpm build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "security": {
+      "csp": null
+    },
+    "windows": [
+      {
+        "label": "main",
+        "title": "React Tetris",
+        "width": 960,
+        "height": 1280,
+        "resizable": true
+      }
+    ]
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": ["../public/icon.png"]
+  }
+}
