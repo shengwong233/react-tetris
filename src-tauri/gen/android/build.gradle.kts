@@ -1,0 +1,29 @@
+buildscript {
+    repositories {
+        // Prefer mainland mirrors first to avoid TLS/handshake failures to dl.google.com.
+        maven(url = "https://maven.aliyun.com/repository/google")
+        maven(url = "https://maven.aliyun.com/repository/central")
+        maven(url = "https://maven.aliyun.com/repository/public")
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath("com.android.tools.build:gradle:8.13.0")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.25")
+    }
+}
+
+allprojects {
+    repositories {
+        maven(url = "https://maven.aliyun.com/repository/google")
+        maven(url = "https://maven.aliyun.com/repository/central")
+        maven(url = "https://maven.aliyun.com/repository/public")
+        google()
+        mavenCentral()
+    }
+}
+
+tasks.register("clean").configure {
+    delete("build")
+}
+
