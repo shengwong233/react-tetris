@@ -1,27 +1,50 @@
-# Tauri 2 Android 手动环境清单
+# Tauri 2 Android 打包说明
 
-当前仓库已经补齐了 Tauri 2 的基础骨架与脚本：
+本文档描述当前仓库的 Android 环境准备、调试、签名、APK/AAB 打包与安装流程。  
+当前项目基于 **Tauri 2 + React 19 + TypeScript + Vite**，Android 与桌面端共用同一套前端产物。
 
-- `src-tauri/` Rust 壳层
-- `src-tauri/tauri.conf.json` Tauri 主配置
-- `src-tauri/tauri.android.conf.json` Android 覆盖配置
-- `package.json` 中的 Tauri / Android 命令脚本
+## 1. 仓库内相关文件
 
-下面这些步骤需要你在本机手动完成。
+- `src-tauri/tauri.conf.json`
+  - Tauri 主配置
+- `src-tauri/tauri.android.conf.json`
+  - Android 覆盖配置
+- `src-tauri/gen/android/`
+  - 生成后的 Android Gradle 工程
+- `src-tauri/gen/android/app/build.gradle.kts`
+  - Android app 模块配置，已接入 release signing 读取逻辑
+- `src-tauri/gen/android/keystore.properties.example`
+  - Android release 签名配置模板
+- `package.json`
+  - Android 相关脚本
 
-## 1. Node 与 pnpm
+## 2. 常用命令
 
-确认版本：
+```bash
+pnpm tauri:android:init
+pnpm tauri:android:dev
+pnpm tauri:android:build:apk
+pnpm tauri:android:build:aab
+```
+
+## 3. 环境要求
+
+建议版本：
+
+- Node.js: `24.x`
+- pnpm: `11.x`
+- Rust: stable
+- JDK: `17`
+- Android SDK Platform: `36.1`
+- Android Build Tools: `36.0.0`
+- Android NDK: 已安装任一可用版本
+
+先确认 Node 与 pnpm：
 
 ```bash
 node -v
 pnpm -v
 ```
-
-建议：
-
-- Node.js: `v24.x`
-- pnpm: `11.x`
 
 安装依赖：
 
@@ -29,9 +52,9 @@ pnpm -v
 pnpm install
 ```
 
-## 2. Rust
+## 4. Rust 与 Android targets
 
-如果未安装 Rust：
+如果还没安装 Rust：
 
 ```bash
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
@@ -44,31 +67,33 @@ source "$HOME/.cargo/env"
 rustup target add aarch64-linux-android armv7-linux-androideabi i686-linux-android x86_64-linux-android
 ```
 
-校验：
+检查：
 
 ```bash
 rustup target list --installed
 cargo -V
 ```
 
-## 3. Java 17
+## 5. Java / JDK
 
-Tauri Android 构建建议使用 JDK 17。
+Android 构建建议固定使用 **JDK 17**。
 
-macOS 可用 Homebrew：
+macOS 上可以使用：
 
 ```bash
 brew install openjdk@17
 ```
 
-把 `JAVA_HOME` 写进 shell 配置，例如 `~/.zshrc`：
+或直接使用 Android Studio 自带 JBR，只要版本兼容 JDK 17 即可。
+
+在 `~/.zshrc` 中配置：
 
 ```bash
 export JAVA_HOME=$(/usr/libexec/java_home -v 17)
 export PATH="$JAVA_HOME/bin:$PATH"
 ```
 
-重载：
+检查：
 
 ```bash
 source ~/.zshrc
@@ -76,30 +101,32 @@ java -version
 echo $JAVA_HOME
 ```
 
-## 4. Android Studio / SDK / NDK
+如果机器上同时装了 Java 8 / 21，优先确保 Android 打包时的 `JAVA_HOME` 指向 JDK 17。
 
-推荐直接安装 Android Studio，然后在图形界面里装齐组件，避免命令行镜像问题。
+## 6. Android Studio / SDK / NDK
 
-需要装的内容：
+推荐通过 Android Studio 的 SDK Manager 安装组件，避免命令行单独拉取时的镜像或 TLS 问题。
 
-- Android SDK Platform
-- Android SDK Build-Tools
+建议至少安装：
+
+- Android SDK Platform `36.1`
+- Android SDK Build-Tools `36.0.0`
 - Android SDK Command-line Tools
 - Android SDK Platform-Tools
-- NDK
+- Android NDK
 
-建议使用 Android Studio 的 SDK Manager 完成。
-
-设置环境变量，写入 `~/.zshrc`：
+环境变量示例：
 
 ```bash
-export ANDROID_HOME="$HOME/Library/Android/sdk"
+export ANDROID_HOME="$HOME/Documents/Android/sdk"
 export ANDROID_SDK_ROOT="$ANDROID_HOME"
 export NDK_HOME="$ANDROID_HOME/ndk/<你的NDK版本目录>"
 export PATH="$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
 ```
 
-重载并校验：
+如果你的 SDK 不在 `~/Documents/Android/sdk`，请改成自己的实际路径。
+
+检查：
 
 ```bash
 source ~/.zshrc
@@ -107,7 +134,7 @@ adb version
 sdkmanager --list
 ```
 
-## 5. 初始化 Tauri Android 工程
+## 7. 初始化 Android 工程
 
 在仓库根目录执行：
 
@@ -115,148 +142,211 @@ sdkmanager --list
 pnpm tauri:android:init
 ```
 
-成功后通常会生成 Android 工程目录，例如 `src-tauri/gen/android/`。
+执行成功后会生成：
 
-如果初始化时报缺少 SDK / NDK / Java，就回到前几步补齐环境变量和组件。
+`src-tauri/gen/android/`
 
-## 6. 本地调试
+这个目录就是实际参与 Android 构建的 Gradle 工程。
 
-先确认手机打开：
+## 8. 当前仓库里的 Android 工程约定
+
+当前仓库已经额外处理过以下内容：
+
+- Android Gradle Plugin 已升级到支持 `SDK 36.1` 的版本
+- `compileSdk` 已改为 `36 + minorApiLevel = 1`
+- `buildToolsVersion` 已显式指定为 `36.0.0`
+- Android 仓库源已补充镜像优先、官方兜底的配置
+- `release signing` 已接入 `keystore.properties` 自动读取
+
+因此，正常情况下你不需要再手工改 Gradle 才能开始打包。
+
+## 9. 本地调试
+
+先确认真机已打开：
 
 - 开发者选项
 - USB 调试
 
-连接手机后校验：
+检查设备：
 
 ```bash
 adb devices
 ```
 
-如果识别到设备，可直接启动：
+如果设备已连接，可启动 Android 调试：
 
 ```bash
 pnpm tauri:android:dev
 ```
 
-## 7. 生成发布签名
+## 10. 生成 release keystore
 
-生成 keystore：
+建议把 keystore 放在你自己的安全目录，不要提交到仓库中。
+
+例如先创建目录：
+
+```bash
+mkdir -p ~/keys
+```
+
+然后生成签名文件：
 
 ```bash
 keytool -genkeypair \
   -v \
-  -keystore release-keystore.jks \
+  -keystore ~/keys/react-tetris-release.jks \
   -alias react-tetris \
   -keyalg RSA \
   -keysize 2048 \
   -validity 10000
 ```
 
-建议把 keystore 放在你自己的安全目录，不要提交进仓库。
+注意：
 
-然后在 `src-tauri/gen/android/keystore.properties` 写入：
+- 国家代码 `C` 应填写两位字母，例如 `CN`
+- `keyAlias` 建议保持为 `react-tetris`
+- 如果你没有单独设置 `key password`，它通常与 `store password` 相同
+
+## 11. 配置 Android release signing
+
+本项目已经在 `src-tauri/gen/android/app/build.gradle.kts` 中接入了自动签名逻辑。
+
+你只需要创建：
+
+`src-tauri/gen/android/keystore.properties`
+
+可以参考：
+
+`src-tauri/gen/android/keystore.properties.example`
+
+内容如下：
 
 ```properties
-storeFile=/绝对路径/release-keystore.jks
+storeFile=/Users/yourname/keys/react-tetris-release.jks
 storePassword=你的store密码
 keyAlias=react-tetris
 keyPassword=你的key密码
 ```
 
-该文件已被 `.gitignore` 忽略。
+字段说明：
 
-## 8. 给 Android 工程接入 release 签名
+- `storeFile`
+  - `.jks` 文件绝对路径
+- `storePassword`
+  - keystore 文件密码
+- `keyAlias`
+  - 创建 keystore 时使用的 alias
+- `keyPassword`
+  - alias 对应私钥密码
 
-执行完 `pnpm tauri:android:init` 后，打开生成的 Android 工程。
+该文件已被 `src-tauri/gen/android/.gitignore` 忽略。
 
-如果模板里还没有 release signing，可在应用模块的 Gradle 文件里补上读取逻辑。
+## 12. 构建 APK / AAB
 
-Kotlin DSL 常见写法大致如下：
-
-```kotlin
-import java.util.Properties
-
-val keystoreProperties = Properties()
-val keystorePropertiesFile = rootProject.file("keystore.properties")
-if (keystorePropertiesFile.exists()) {
-    keystoreProperties.load(keystorePropertiesFile.inputStream())
-}
-
-android {
-    signingConfigs {
-        create("release") {
-            storeFile = file(keystoreProperties["storeFile"] as String)
-            storePassword = keystoreProperties["storePassword"] as String
-            keyAlias = keystoreProperties["keyAlias"] as String
-            keyPassword = keystoreProperties["keyPassword"] as String
-        }
-    }
-
-    buildTypes {
-        getByName("release") {
-            signingConfig = signingConfigs.getByName("release")
-            isMinifyEnabled = false
-        }
-    }
-}
-```
-
-如果你的模板生成的是 Groovy DSL，再按 Groovy 语法等价改写即可。
-
-## 9. 构建 APK / AAB
-
-构建 APK：
+### 构建 APK
 
 ```bash
 pnpm tauri:android:build:apk
 ```
 
-构建 AAB：
+### 构建 AAB
 
 ```bash
 pnpm tauri:android:build:aab
 ```
 
-如果命令失败，优先排查：
+## 13. 构建产物位置
 
-- `JAVA_HOME` 是否指向 JDK 17
-- `ANDROID_HOME` / `ANDROID_SDK_ROOT` 是否正确
-- `NDK_HOME` 是否指向已安装的 NDK
-- `adb`, `sdkmanager`, `cargo` 是否都在 `PATH`
-- Rust Android targets 是否已安装
+### 未签名 release APK
 
-## 10. 安装到真机
+如果没有配置 signing，常见产物在：
 
-找到生成的 APK 后执行：
+`src-tauri/gen/android/app/build/outputs/apk/universal/release/app-universal-release-unsigned.apk`
+
+这个包通常**不能直接安装**。在部分系统或安装器上，可能会报：
+
+- `packageInfo is null`
+- 解析包失败
+- 安装失败
+
+### 已签名 release APK
+
+配置好 `keystore.properties` 后重新打包，常见产物仍在同目录，但文件名通常不再带 `unsigned`。
+
+### debug APK
+
+如果你只是想先验证能否安装，可优先构建 debug 包：
 
 ```bash
-adb install -r /path/to/app-release.apk
+cd src-tauri/gen/android
+./gradlew assembleDebug
 ```
 
-如果是小米 / Redmi 真机，还建议检查：
+常见位置：
+
+`src-tauri/gen/android/app/build/outputs/apk/debug/app-debug.apk`
+
+## 14. 安装到真机
+
+安装 APK：
+
+```bash
+adb install -r /path/to/app.apk
+```
+
+如果是 release 包，建议优先使用已签名 APK。
+
+对于小米 / Redmi / HyperOS / MIUI 设备，还建议检查：
 
 - 是否允许 USB 安装
-- 是否关闭 MIUI/HyperOS 的安装拦截
 - 是否允许该电脑的 USB 调试授权
+- 是否存在系统安装拦截
 
-## 11. 红米真机验证清单
+## 15. 常见问题
 
-建议至少验证这些项：
+### 1. `icon ... is not RGBA`
 
-1. App 能正常启动，首屏没有白屏或黑屏卡死。
-2. 触控按钮可操作，左右移动、旋转、加速下降、硬降都正常。
-3. 暂停、重开、音效开关都生效。
-4. 横竖屏切换或应用切后台再回来时，不会直接丢状态或崩溃。
-5. 声音播放正常，静音开关符合预期。
-6. 长时间运行后无明显卡顿、发热异常或输入延迟。
+说明 Tauri 读取到的 PNG 图标不是标准 RGBA 格式。  
+本仓库的 `public/icon.png` 已处理为可用格式，如果再次替换图标，请确保仍为 RGBA PNG。
 
-## 12. 常用命令
+### 2. `Could not resolve com.android.tools.build:gradle`
+
+通常是 Android 仓库网络、TLS 或镜像问题。  
+当前仓库的 `src-tauri/gen/android/` 已补充镜像优先配置；如果仍失败，优先检查本机网络与 SDK Manager。
+
+### 3. `Failed to find Platform SDK with path: platforms;android-36`
+
+说明本机 SDK 版本与工程目标版本不匹配。  
+当前仓库已经切到 `36.1` 兼容写法，正常应安装 Android SDK Platform `36.1`。
+
+### 4. `packageInfo is null`
+
+通常不是代码问题，而是你安装了**未签名 release APK**。  
+请先配置 `keystore.properties` 再重新打包，或直接安装 `debug APK` 进行验证。
+
+### 5. `JAVA_HOME` 混乱
+
+如果系统同时存在 Java 8 / 17 / 21，Gradle 可能读到错误版本。  
+优先保证：
 
 ```bash
-pnpm tauri:dev
-pnpm tauri:build
-pnpm tauri:android:init
-pnpm tauri:android:dev
-pnpm tauri:android:build:apk
-pnpm tauri:android:build:aab
+echo $JAVA_HOME
+java -version
 ```
+
+都落在 JDK 17。
+
+## 16. 发布前建议检查
+
+建议至少确认：
+
+1. `pnpm tauri:android:build:apk` 能稳定成功
+2. 真机能正常安装 APK
+3. 首屏无白屏 / 黑屏卡死
+4. 触控按钮可正常操作
+5. 暂停、重开、音效开关正常
+6. 切后台再回来不会直接崩溃或丢状态
+7. 声音播放符合预期
+8. 长时间运行无明显卡顿和输入延迟
+
+更完整的人工检查项请参考根目录 `QA.md`。
