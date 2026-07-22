@@ -16,6 +16,7 @@ concurrency:
 jobs:
   build-android:
     runs-on: ubuntu-22.04
+    environment: react-tetris
 
     env:
       JAVA_VERSION: '17'
@@ -79,12 +80,12 @@ jobs:
         shell: bash
         env:
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
-          ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
           test -n "$ANDROID_KEYSTORE_BASE64"
-          test -n "$ANDROID_STORE_PASSWORD"
+          test -n "$ANDROID_KEYSTORE_PASSWORD"
           test -n "$ANDROID_KEY_ALIAS"
           test -n "$ANDROID_KEY_PASSWORD"
 
@@ -92,7 +93,7 @@ jobs:
 
           cat > src-tauri/gen/android/keystore.properties <<EOF
           storeFile=$RUNNER_TEMP/react-tetris-release.jks
-          storePassword=$ANDROID_STORE_PASSWORD
+          storePassword=$ANDROID_KEYSTORE_PASSWORD
           keyAlias=$ANDROID_KEY_ALIAS
           keyPassword=$ANDROID_KEY_PASSWORD
           EOF
