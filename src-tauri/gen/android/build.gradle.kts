@@ -1,9 +1,13 @@
 buildscript {
     repositories {
-        // Prefer mainland mirrors first to avoid TLS/handshake failures to dl.google.com.
-        maven(url = "https://maven.aliyun.com/repository/google")
         maven(url = "https://maven.aliyun.com/repository/central")
-        maven(url = "https://maven.aliyun.com/repository/public")
+        maven(url = "https://maven.aliyun.com/repository/google") {
+            content {
+                includeGroupByRegex("com\\.android(\\..*)?")
+                includeGroupByRegex("androidx(\\..*)?")
+                includeGroupByRegex("com\\.google(\\..*)?")
+            }
+        }
         google()
         mavenCentral()
     }
@@ -15,9 +19,14 @@ buildscript {
 
 allprojects {
     repositories {
-        maven(url = "https://maven.aliyun.com/repository/google")
         maven(url = "https://maven.aliyun.com/repository/central")
-        maven(url = "https://maven.aliyun.com/repository/public")
+        maven(url = "https://maven.aliyun.com/repository/google") {
+            content {
+                includeGroupByRegex("com\\.android(\\..*)?")
+                includeGroupByRegex("androidx(\\..*)?")
+                includeGroupByRegex("com\\.google(\\..*)?")
+            }
+        }
         google()
         mavenCentral()
     }
