@@ -12,14 +12,6 @@ gradlePlugin {
 }
 
 repositories {
-    maven(url = "https://maven.aliyun.com/repository/central")
-    maven(url = "https://maven.aliyun.com/repository/google") {
-        content {
-            includeGroupByRegex("com\\.android(\\..*)?")
-            includeGroupByRegex("androidx(\\..*)?")
-            includeGroupByRegex("com\\.google(\\..*)?")
-        }
-    }
     google()
     mavenCentral()
 }

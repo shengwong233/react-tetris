@@ -1,6 +1,6 @@
 [package]
 name = "react-tetris-tauri"
-version = "1.0.0"
+version = "1.0.5"
 description = "React Tetris packaged with Tauri 2"
 authors = ["wangsheng"]
 edition = "2021"
